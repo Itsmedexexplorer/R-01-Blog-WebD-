@@ -9,7 +9,7 @@ interface ArticleContextType {
   updateArticle: (article: Article) => void;
   deleteArticle: (id: string) => void;
   isAdmin: boolean;
-  login: (password: string) => boolean;
+  login: (password: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -51,12 +51,23 @@ export const ArticleProvider: React.FC<{ children: ReactNode }> = ({ children })
     setArticles(prev => prev.filter(a => a.id !== id));
   };
 
-  const login = (password: string) => {
-    // Demo password
-    if (password === 'rutansh') {
-      setIsAdmin(true);
-      localStorage.setItem('rutansh_admin', 'true');
-      return true;
+  const login = async (password: string) => {
+    // SHA-256 hash of "rutansh"
+    const targetHash = '5d517723fa8fa1ccfa27608847a9d1b32497063e146fe126f1cebe43e18c5687';
+
+    try {
+      const msgBuffer = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      if (hashHex === targetHash) {
+        setIsAdmin(true);
+        localStorage.setItem('rutansh_admin', 'true');
+        return true;
+      }
+    } catch (e) {
+      console.error('Login error', e);
     }
     return false;
   };

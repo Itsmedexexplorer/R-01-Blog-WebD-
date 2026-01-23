@@ -77,7 +77,7 @@ const parseBold = (text: string): React.ReactNode[] => {
 
     parts.push(
       <strong key={`bold-${match.index}`} className="font-bold text-charcoal dark:text-white">
-        {match[1]}
+        {parseItalic(match[1])}
       </strong>
     );
 
