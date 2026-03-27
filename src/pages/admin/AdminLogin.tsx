@@ -9,9 +9,9 @@ export const AdminLogin: React.FC = () => {
   const { login } = useArticles();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(password)) {
+    if (await login(password)) {
       navigate('/admin/dashboard');
     } else {
       setError('Invalid passphrase. Try "rutansh".');
